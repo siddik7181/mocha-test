@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import * as userService from '../services/User'; 
+import mongoose from 'mongoose';
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -11,15 +12,14 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
             }
         }
         const existingUser = await userService.getUserByEmail(email);
-        console.log("Existing User: " , existingUser)
+        // console.log(existingUser)
         if (existingUser.length !== 0) {
             throw {
-                status: 400,
+                status: 409,
                 message: 'email already exists'
             };
         }
-        const userData = { name, email, role }; 
-        const newUser = await userService.createUser(userData);
+        const newUser = await userService.createUser({ name, email, role });
         res.status(201).json({
             success: true,
             message: 'User created successfully',
@@ -33,6 +33,12 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 export const getUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
+        if (!mongoose.isValidObjectId(id)) {
+            throw {
+                status: 400,
+                message: 'invalid userId'
+            }
+        }
         const user = await userService.getUserById(id);
         if (!user) {
             throw {
@@ -52,6 +58,12 @@ export const getUser = async (req: Request, res: Response, next: NextFunction) =
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
+        if (!mongoose.isValidObjectId(id)) {
+            throw {
+                status: 400,
+                message: 'invalid userId'
+            }
+        }
         const userData = req.body;
         const updatedUser = await userService.updateUser(id, userData);
         if (!updatedUser) {
@@ -73,7 +85,14 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
+        if (!mongoose.isValidObjectId(id)) {
+            throw {
+                status: 400,
+                message: 'invalid userId'
+            }
+        }
         const deletedUser = await userService.deleteUser(id);
+
         if (!deletedUser) {
             throw {
                 status: 404,

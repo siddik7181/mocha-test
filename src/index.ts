@@ -25,7 +25,6 @@ app.use((req: Request, res: Response, next: NextFunction)=> {
 app.use((err: ErrorType, req: Request, res: Response, next: NextFunction) => {
   const status = err.status || 500;
   const message = err.message || "Internal Server Issue";
-  console.error(err);
   res.status(status).json({status, message});
   return;
 });
@@ -43,3 +42,6 @@ const startServer = async () => {
 };
 
 startServer();
+
+
+export default app;
