@@ -13,7 +13,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         }
         const existingUser = await userService.getUserByEmail(email);
         // console.log(existingUser)
-        if (existingUser.length !== 0) {
+        if (existingUser && existingUser.length !== 0) {
             throw {
                 status: 409,
                 message: 'email already exists'
