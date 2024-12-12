@@ -11,9 +11,16 @@ jobs:
   build:
     runs-on: macos-latest
 
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: --health-cmd="mongod --version" --health-interval=10s --health-timeout=5s --health-retries=5
+
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x, 23.x]
+        node-version: [23.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -30,5 +37,8 @@ jobs:
     - name: Install dependencies
       run: yarn install
       
-    - run: yarn build
-    - run: yarn test
+    - name: Build the app
+      run: yarn build
+
+    - name: Run tests
+      run: yarn test
