@@ -8,7 +8,7 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon --exec ts-node src/index.ts",
-    "test": "mocha --require ts-node/register src/**/*.test.ts"
+    "test": "mocha --require ts-node/register --exit src/**/*.test.ts"
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",

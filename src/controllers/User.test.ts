@@ -5,6 +5,29 @@ import sinon from "sinon";
 import * as userService from "../services/User";
 
 describe("POST /users without sinon", () => {
+  let alreadyExistUserId: string;
+
+  beforeEach(async () => {
+    const payload = {
+      name: "already_exist",
+      email: "already@exist.com",
+      role: "",
+    };
+    const res = await request(app)
+      .post("/users")
+      .send(payload)
+      .set("Accept", "application/json");
+    alreadyExistUserId = res.body.data._id;
+  });
+
+  afterEach(async () => {
+    const res = await request(app)
+      .delete(`/users/${alreadyExistUserId}`)
+      .set("Accept", "application/json");
+
+    expect(res.status).to.equal(200);
+  });
+
   it("Should give 400 on invalid payload", async () => {
     const payload = {
       name: "",
@@ -21,8 +44,8 @@ describe("POST /users without sinon", () => {
   });
   it("Should give 409 on duplicate email", async () => {
     const payload = {
-      name: "n1",
-      email: "n@1.com",
+      name: "already_exist",
+      email: "already@exist.com",
       role: "",
     };
     const res = await request(app)
